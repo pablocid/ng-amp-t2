@@ -1,0 +1,52 @@
+<div class="main-container">
+  
+  <mat-toolbar color="primary">
+    <mat-toolbar-row>
+      <button mat-icon-button (click)="drawer.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>Title</span>
+
+      <span class="spacer"></span>
+
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vertical</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>
+          <mat-icon>publish</mat-icon>
+          <span>Share</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon>mode_comment</mat-icon>
+          <span>Comment</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon>delete</mat-icon>
+          <span>Delete</span>
+        </button>
+      </mat-menu>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <mat-drawer-container>
+
+    <mat-drawer #drawer>
+      <h1>MENU</h1>
+      <button color="primary" mat-button routerLink="/home" (click)="drawer.toggle()">HOME</button>
+      <button color="primary" mat-button routerLink="/home/dashboard" (click)="drawer.toggle()">DASHBOARD</button>
+      <button color="primary" mat-button routerLink="/home/tabs" (click)="drawer.toggle()">TABS</button>
+      <button color="primary" mat-button routerLink="/home/card" (click)="drawer.toggle()">CARD</button>
+      <button color="primary" mat-button routerLink="/home/steppers" (click)="drawer.toggle()">STEPPER</button>
+      <button color="primary" mat-button routerLink="/home/forms" (click)="drawer.toggle()">FORMS</button>
+      <button color="primary" mat-button routerLink="/home/jsonform" (click)="drawer.toggle()">JSON FORMS</button>
+      <button color="primary" mat-button routerLink="/home/cidforms" (click)="drawer.toggle()">CID FORMS</button>
+    </mat-drawer>
+
+    <mat-drawer-content>
+      <router-outlet></router-outlet>
+    </mat-drawer-content>
+
+  </mat-drawer-container>
+
+</div>

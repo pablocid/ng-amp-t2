@@ -1,0 +1,18 @@
+<form [formGroup]="basicForm" (ngSubmit)="onSubmit($event)">
+  <app-stock-branch [parent]="basicForm"></app-stock-branch>
+  <app-stock-selector [parent]="basicForm" [products]="products" (added)="addStock($event)"></app-stock-selector>
+  <app-stock-products [parent]="basicForm" (removed)="removeStock($event)"></app-stock-products>
+  <div>
+    <button type="submit" [disabled]="basicForm.invalid">SUBMIT</button>
+  </div>
+</form>
+
+<pre> {{ basicForm.value | json }}</pre>
+
+
+<div class="app">
+  <dynamic-form [config]="config" [data]="data" #form="dynamicForm" (submit)="submit($event)">
+  </dynamic-form>
+  {{ form.valid }}
+  {{ form.value | json }}
+</div>
