@@ -22,7 +22,7 @@ export interface Attribute {
   editValue: any;
 }
 
-interface Config {
+export interface Config {
   id: string;
   string: string;
   number: number;
@@ -89,26 +89,36 @@ export class AttributeComponent implements OnInit, AfterContentInit, OnDestroy {
     }
     const component = this.getAttr(this.attributesComponentList, id, 'component');
     if (!component) {
-      throw new Error('El id ' + id + ' no tiene componente');
+      // throw new Error('El id ' + id + ' no tiene componente');
+      return;
     }
     this.entity = this.getAttr(this.attributesComponentList, id, 'entity');
     this.component = this.entry.createComponent(this._resolver.resolveComponentFactory(component));
 
     // setup component
+    this.component.instance.config = this.attribute.config;
     this.component.instance.attribute$ = new BehaviorSubject(this.attribute);
+    this.component.instance.isEntity = this.entity;
     this.component.instance.attribute = this.attribute;
     this.component.instance.attrValue = this.attribute.value;
+    this.component.instance.attrValue$.next(this.attribute.value);
     this.component.instance.attrOldValue = this.attribute.value;
     this.component.instance.setTemplate(this.editMode);
     this.component.instance.canEdit = this.canEdit;
     this.component.instance.save = async ($event) => {
-      console.log('On Save', {
-        $event,
-        attrOldValue: this.component.instance.attrOldValue,
-        valueEmitted: { value: this.component.instance.attrValue, options: $event.options, entity: this.entity }
-      });
-      this.save.emit({ value: this.component.instance.attrValue, options: $event.options, entity: this.entity });
+      console.log('OnSave', $event);
+
+      // console.log('On Save', {
+      //   $event,
+      //   attrOldValue: this.component.instance.attrOldValue,
+      //   valueEmitted: { value: this.component.instance.attrValue, options: $event.options, entity: this.entity }
+      // });
+      // // this.component.instance.attrOldValue = this.component.instance.attrValue;
+      // this.save.emit({ value: this.component.instance.attrValue, options: $event.options, entity: this.entity });
       return true;
+    };
+    this.component.instance.cancel = () => {
+      console.log('Canceled');
     };
   }
 

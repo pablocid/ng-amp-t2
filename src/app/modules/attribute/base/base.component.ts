@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ViewContainerRef, TemplateRef, EventEmitter, EmbeddedViewRef } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { Attribute } from '../attribute.component';
+import { map, take } from 'rxjs/operators';
+import { Attribute, Config } from '../attribute.component';
 
 @Component({
   selector: 'app-base',
@@ -11,20 +11,23 @@ import { Attribute } from '../attribute.component';
 export class BaseComponent implements OnInit {
   public attribute$: Observable<Attribute>;
   public attribute: Attribute;
+  public config: Config[];
   public edit: boolean;
   public canEdit: boolean;
   public editMode: boolean;
   // public subject: BehaviorSubject<any>;
   // public value: Observable<any>;
-  public label: Observable<any>;
+  public label: string;
   public attrValue: any;
   public attrOldValue: any;
+  public attrValue$: BehaviorSubject<any>;
   public description: Observable<string>;
   // public listViewLabel: Observable<any>;
   public listViewValue: Observable<any>;
   public editViewValue: Observable<any>;
   // public updateOptios: BehaviorSubject<{ push?: boolean, delete?: boolean, pop?: boolean, partial?: any }>;
   public valueIsSet$: Observable<boolean>;
+  public isEntity: boolean;
 
   public currentEmbeddedViewRef: EmbeddedViewRef<any>;
 
@@ -32,6 +35,7 @@ export class BaseComponent implements OnInit {
     // this.subject = new BehaviorSubject(undefined);
     // this.updateOptios = new BehaviorSubject({});
     // this.value = this.subject.asObservable();
+    this.attrValue$ = new BehaviorSubject(undefined);
   }
 
 
@@ -40,13 +44,13 @@ export class BaseComponent implements OnInit {
   @ViewChild('editViewTmpl') editViewTmpl: TemplateRef<any>;
 
   ngOnInit() {
-    // this.setTemplate();
-    // this.subject.next(this.attr.value);
-    // this.subject = new BehaviorSubject(this.attr.value);
-    this.description = this.attribute$.pipe(map(x => x.config)).pipe(map(config => {
-      return this.getAttr(config, 'label', 'string');
-    }));
-    this.valueIsSet$ = this.attribute$.pipe(map(x => x.value)).pipe(map(value => {
+    // this.description = this.attribute$.pipe(map(x => x.config)).pipe(map(config => {
+    //   return this.getAttr(config, 'label', 'string');
+    // }));
+
+    this.label = this.getAttr(this.config, 'label', 'string');
+
+    this.valueIsSet$ = this.attrValue$.pipe(map(value => {
       if (value === undefined || value === null) {
         return false;
       } else {
@@ -85,18 +89,28 @@ export class BaseComponent implements OnInit {
   // }
 
   update(newValue) {
-    this.attrValue = newValue;
+    // this.attrValue = newValue;
   }
 
-  localSave() {
+  async localSave() {
     this.setTemplate(false);
-    this.save('OK');
+    const currentValue = await this.attrValue$.pipe(take(1)).toPromise();
+    this.attrOldValue = currentValue;
+    this.save({ value: currentValue, options: {}, entity: this.isEntity });
+  }
+
+  async localCancel() {
+    this.setTemplate(false);
+    this.attrValue$.next(this.attrOldValue);
+    this.cancel();
   }
 
   assessAttr() {
     this.setTemplate(true);
   }
   async save($event): Promise<boolean> { return; }
+
+  cancel() { }
 
   protected getAttr(attrs: any[], id: string, dd: string) {
     // const attr = attrs.find(x => x.id);

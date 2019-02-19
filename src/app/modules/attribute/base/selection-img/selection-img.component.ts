@@ -7,10 +7,11 @@ import { MatBottomSheet } from '@angular/material';
 @Component({
   selector: 'app-selection-img',
   templateUrl: './selection-img.component.html',
-  styleUrls: ['./selection-img.component.scss']
+  styleUrls: ['./selection-img.component.scss', '../base.component.scss']
 })
 export class SelectionImgComponent extends SelectionComponent implements AfterContentInit {
-
+  imgOpts;
+  public attrViewImg$: Observable<string>;
   public listViewImg: Observable<any>;
   imgOptions$: Observable<any>;
 
@@ -18,9 +19,16 @@ export class SelectionImgComponent extends SelectionComponent implements AfterCo
     protected bottomSheet: MatBottomSheet
   ) { super(bottomSheet); }
 
-  automaticOptionShow() {}
+  automaticOptionShow() { }
 
   protected _setupOnInit() {
+
+    this.attrViewValue = this.attrValue$.pipe(map(x => this.getOptionValue(x)));
+    this.attrViewImg$ = this.attrValue$.pipe(map(x => this.getOptionImgValue(x)));
+    this.options = this.getAttr(this.config, 'options', 'listOfObj');
+    this.imgOpts = this.getAttr(this.config, 'optionImages', 'listOfObj');
+
+
     this.listViewValue = this.attribute$.pipe(map(attr => {
       const options = this.getAttr(attr.config, 'options', 'listOfObj');
       return this.getAttr(options, attr.value, 'string');
@@ -46,11 +54,17 @@ export class SelectionImgComponent extends SelectionComponent implements AfterCo
 
   }
 
-
-
   public onImageTouch(imgOpt) {
-    this.update({ editValue: imgOpt.id });
-    // this.cdr.detectChanges();
+    this.attrValue$.next(imgOpt.id);
+  }
+
+  getOptionImgValue(attrValue: string): string {
+    try {
+      const opts = <{ id: string, string: string }[]>this.getAttr(this.attribute.config, 'optionImages', 'listOfObj');
+      return opts.find(x => x.id === attrValue)['string'];
+    } catch (e) {
+      return '';
+    }
   }
 
 }

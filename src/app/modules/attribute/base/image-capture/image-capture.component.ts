@@ -13,7 +13,7 @@ import { IConfirmDialogData, ConfirmDialogComponent } from 'src/app/components/c
 @Component({
   selector: 'app-image-capture',
   templateUrl: './image-capture.component.html',
-  styleUrls: ['./image-capture.component.scss']
+  styleUrls: ['./image-capture.component.scss', '../base.component.scss']
 })
 export class ImageCaptureComponent extends BaseComponent {
   public numOfPics: Observable<number>;

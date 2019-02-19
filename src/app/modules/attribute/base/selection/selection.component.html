@@ -1,23 +1,22 @@
-<mat-card style="position:relative;">
+<mat-card class="card_attr">
   <mat-card-header align="center">
-    <!-- <mat-card-title>{{description | async}}</mat-card-title> -->
-    <mat-card-subtitle>{{description | async}}</mat-card-subtitle>
+    <mat-card-subtitle>{{label}}</mat-card-subtitle>
   </mat-card-header>
-  <mat-card-content>
-    <span #entry></span>
+  <mat-card-content style="height: 100%">
+    <ng-template #entry></ng-template>
   </mat-card-content>
   <mat-card-actions *ngIf="editMode">
     <button mat-button (click)="localSave()">SAVE</button>
-    <button mat-button>CANCEL</button>
+    <button mat-button (click)="localCancel()">CANCEL</button>
   </mat-card-actions>
 </mat-card>
 
 <ng-template #listViewTmpl>
-  <div align="center" *ngIf="attrViewValue | async">
+  <div class="attr_selection" *ngIf="attrViewValue | async">
     <h2>{{attrViewValue | async}}</h2>
   </div>
   <div style="display:block; position: absolute; top:-10px; right:-10px;" *ngIf="canEdit">
-    <button mat-fab color="accent" (click)="assessAttr()">
+    <button mat-fab color="accent" (click)="localAssessAttr()">
       <mat-icon>create</mat-icon>
     </button>
   </div>
@@ -25,14 +24,12 @@
 </ng-template>
 
 <ng-template #editViewTmpl>
-  <div align="center" *ngIf="attrViewValue | async">
+  <div class="attr_selection" *ngIf="attrViewValue | async">
     <h2>{{attrViewValue | async}}</h2>
   </div>
-
 
   <button style="display:block; position: absolute; top:-10px; right:-10px;" mat-fab color="accent" (click)="presentActionSheet()">
     <mat-icon>assignment</mat-icon>
   </button>
-
 
 </ng-template>

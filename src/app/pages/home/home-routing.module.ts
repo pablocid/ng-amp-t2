@@ -11,7 +11,8 @@ const routes: Routes = [
       { path: 'steppers', loadChildren: './pages/steppers/steppers.module#SteppersPageModule' },
       { path: 'forms', loadChildren: './pages/forms/forms.module#FormsPageModule' },
       { path: 'jsonform', loadChildren: './pages/jsonform/jsonform.module#JsonformPageModule' },
-      { path: 'cidforms', loadChildren: './pages/cidforms/cidforms.module#CidformsPageModule' }
+      { path: 'cidforms', loadChildren: './pages/cidforms/cidforms.module#CidformsPageModule' },
+      { path: 'd3', loadChildren: './pages/d3/d3.module#D3PageModule' }
     ]
   }
 ];

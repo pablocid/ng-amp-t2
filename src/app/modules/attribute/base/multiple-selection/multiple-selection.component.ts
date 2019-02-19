@@ -2,61 +2,52 @@ import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from '../base.component';
 import { Observable } from 'rxjs';
 import { map, filter, take } from 'rxjs/operators';
+import { MatSlideToggleChange } from '@angular/material';
 
 @Component({
   selector: 'app-multiple-selection',
   templateUrl: './multiple-selection.component.html',
-  styleUrls: ['./multiple-selection.component.scss']
+  styleUrls: ['./multiple-selection.component.scss', '../base.component.scss']
 })
 export class MultipleSelectionComponent extends BaseComponent {
   options$: Promise<any[]>;
+  options;
+  selected$: Observable<{ id: string, string: string }[]>;
+  selectList$;
   constructor() { super(); }
 
   setupOnInit() {
-    this.valueIsSet$ = this.attribute$.pipe(map(x => x.value)).pipe(map(value => {
-      if (!Array.isArray(value) || value === undefined || value === null) {
-        return false;
-      } else {
-        return value.length === 0 ? false : true;
-      }
-    }));
-    this.listViewValue = this.attribute$.pipe(map(attr => {
-      const options = this.getAttr(attr.config, 'options', 'listOfObj');
-      if (!Array.isArray(attr.value)) { return []; }
-      return options.filter(x => attr.value.indexOf(x.id) !== -1).map(x => x.string);
+    this.options = <{ id: string, string: string }[]>this.getAttr(this.config, 'options', 'listOfObj');
+
+    this.selected$ = this.attrValue$.pipe(map(attr => {
+      const options = this.getAttr(this.config, 'options', 'listOfObj');
+      if (!Array.isArray(attr)) { return []; }
+      return options.filter(x => attr.indexOf(x.id) !== -1).map(x => x.string);
     }));
 
-    this.editViewValue = this.attribute$.pipe(map(attr => {
-      const options = this.getAttr(attr.config, 'options', 'listOfObj');
-      let editValue = attr.editValue;
-      if (!Array.isArray(editValue)) { editValue = []; }
-      return options.map(opt => {
-        return {
-          ...opt,
-          selected: editValue.indexOf(opt.id) === -1 ? false : true
-        };
+    this.selectList$ = this.attrValue$.pipe(map(attrs => {
+      return this.options.map(x => {
+        return { ...x, selected: attrs.indexOf(x.id) === -1 ? false : true };
       });
     }));
-
-    this.options$ = this.attribute$.pipe(map(attr => {
-      const options = this.getAttr(attr.config, 'options', 'listOfObj');
-      let value = attr.value;
-      if (!Array.isArray(value)) { value = []; }
-      return options.map(opt => {
-        return {
-          ...opt,
-          selected: value.indexOf(opt.id) === -1 ? false : true
-        };
-      });
-    })).pipe(take(1)).toPromise();
 
   }
 
-  async optionChange($event, option, index) {
-    const currentValue = await this.editViewValue.pipe(take(1)).toPromise();
+  async optionChange($event: MatSlideToggleChange, index) {
+    console.log($event.checked);
+    const option = this.options[index];
+    const currentValue = await this.attrValue$.pipe(take(1)).toPromise();
+    const i = currentValue.indexOf(option.id);
+    if ($event.checked && i === -1) {
+      currentValue.push(option.id);
+    } else if (!$event.checked && i !== -1) {
+      currentValue.splice(i, 1);
+    }
+    this.attrValue$.next(currentValue);
+    // const currentValue = await this.editViewValue.pipe(take(1)).toPromise();
     // console.log('currentValue', currentValue);
-    currentValue[index].selected = $event.checked;
-    this.update({ editValue: currentValue.filter(x => x.selected).map(x => x.id) });
+    // currentValue[index].selected = $event.checked;
+    // this.update({ editValue: currentValue.filter(x => x.selected).map(x => x.id) });
   }
 
 }

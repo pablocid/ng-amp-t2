@@ -9,33 +9,22 @@ import { MatBottomSheet } from '@angular/material';
 @Component({
   selector: 'app-selection',
   templateUrl: './selection.component.html',
-  styleUrls: ['./selection.component.scss']
+  styleUrls: ['./selection.component.scss', '../base.component.scss']
 })
 export class SelectionComponent extends BaseComponent implements AfterContentInit {
+  protected options: { id: string, string: string }[];
 
   constructor(
     protected bottomSheet: MatBottomSheet
   ) { super(); }
 
-  options$: Observable<any>;
+  public options$: Observable<any>;
 
-  public attrViewValue = new BehaviorSubject<string>(undefined);
+  public attrViewValue: Observable<string>;
 
   protected _setupOnInit() {
-    this.attrViewValue.next(this.getOptionValue(this.attrValue));
-
-    this.listViewValue = this.attribute$.pipe(map(attr => {
-      const options = this.getAttr(attr.config, 'options', 'listOfObj');
-      return this.getAttr(options, attr.value, 'string');
-    }));
-    this.editViewValue = this.attribute$.pipe(map(attr => {
-      const options = this.getAttr(attr.config, 'options', 'listOfObj');
-      return this.getAttr(options, attr.editValue, 'string');
-    }));
-
-    this.options$ = this.attribute$.pipe(map(attr => {
-      return this.getAttr(attr.config, 'options', 'listOfObj');
-    }));
+    this.attrViewValue = this.attrValue$.pipe(map(x => this.getOptionValue(x)));
+    this.options = this.getAttr(this.config, 'options', 'listOfObj');
   }
 
   getOptionValue(attrValue: string): string {
@@ -57,17 +46,18 @@ export class SelectionComponent extends BaseComponent implements AfterContentIni
     }
   }
 
-  async buttons(): Promise<IOptionsDialogButton[]> {
-    const btns = await this.options$.pipe(take(1)).toPromise();
-    const buttons = btns.map(o => {
+  localAssessAttr() {
+    this.presentActionSheet();
+    this.assessAttr();
+  }
+
+  buttons(): IOptionsDialogButton[] {
+    const buttons = this.options.map(o => {
       return {
         text: o.string,
         icon: 'chevron_right',
         handler: () => {
-          console.log(o.id);
-          // this.update({ editValue: o.id });
-          this.attrValue = o.id;
-          this.attrViewValue.next(this.getOptionValue(this.attrValue));
+          this.attrValue$.next(o.id);
         }
       };
     });
@@ -75,7 +65,6 @@ export class SelectionComponent extends BaseComponent implements AfterContentIni
     buttons.push({
       text: 'Cancel',
       icon: 'close',
-      role: 'cancel',
       handler: () => {
         console.log('Cancel');
       }
@@ -86,7 +75,7 @@ export class SelectionComponent extends BaseComponent implements AfterContentIni
 
   async presentActionSheet() {
     const data: IOptionsDialogData = {};
-    data.header = await this.description.pipe(take(1)).toPromise();
+    data.header = this.label;
     data.buttons = await this.buttons();
     this.bottomSheet.open(OptionsDialogComponent, { data });
   }

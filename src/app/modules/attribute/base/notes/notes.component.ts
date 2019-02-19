@@ -5,7 +5,7 @@ import { BaseComponent } from '../base.component';
 @Component({
   selector: 'app-notes',
   templateUrl: './notes.component.html',
-  styleUrls: ['./notes.component.scss'],
+  styleUrls: ['./notes.component.scss', '../base.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NotesComponent extends BaseComponent {

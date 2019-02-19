@@ -1,13 +1,17 @@
-<mat-card>
+<mat-card class="card_attr">
   <mat-card-header align="center">
-    <mat-card-title>{{description | async}}</mat-card-title>
+    <mat-card-subtitle>{{label}}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content> <span #entry></span> </mat-card-content>
+  <mat-card-actions *ngIf="editMode">
+    <button mat-button (click)="localSave()">SAVE</button>
+    <button mat-button (click)="localCancel()">CANCEL</button>
+  </mat-card-actions>
 </mat-card>
 
 <ng-template #listViewTmpl>
-  <div align="center" *ngIf=" (listViewValue | async ) !== null">
-    <h2>{{listViewValue | async}} {{(config$ | async)?.unit}}</h2>
+  <div class="attr_number" *ngIf=" (attrValue$ | async ) !== null">
+    <h2>{{attrValue$ | async}} {{unit}}</h2>
   </div>
   <div style="display:block; position: absolute; top:-10px; right:-10px;" *ngIf="canEdit">
     <button mat-fab color="accent" (click)="assessAttr()">
@@ -19,12 +23,12 @@
 <ng-template #editViewTmpl>
   <div align="center">
     <h2>
-      {{editViewValue | async}}
-      <span *ngIf="(editViewValue | async) === null"> - </span>
-      {{(config$ | async)?.unit}}
+      {{attrValue$ | async}}
+      <span *ngIf="(attrValue$ | async) === null"> - </span>
+      {{unit}}
     </h2>
-    <mat-slider style="width:100%;" thumbLabel [min]="(config$ | async)?.min" [max]="(config$ | async)?.max" [step]="(config$ | async)?.step"
-      (change)="onChangeValue($event)" [value]="editViewValue | async">
+    <mat-slider style="width:100%;" thumbLabel [min]="min" [max]="max" [step]="step" (change)="onChangeValue($event)"
+      [value]="attrValue$ | async">
     </mat-slider>
   </div>
 </ng-template>
