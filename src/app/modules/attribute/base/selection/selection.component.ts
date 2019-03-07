@@ -1,17 +1,17 @@
-import { Component, AfterContentInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { BaseComponent } from '../base.component';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map, take } from 'rxjs/operators';
-// tslint:disable-next-line:max-line-length
-import { IOptionsDialogData, OptionsDialogComponent, IOptionsDialogButton } from 'src/app/components/options-dialog/options-dialog.component';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { MatBottomSheet } from '@angular/material';
+// tslint:disable-next-line:max-line-length
+import { IOptionsBottomsheetButton, IOptionsBottomsheetData, OptionsBottomsheetComponent } from '../../components/options-bottomsheet/options-bottomsheet.component';
 
 @Component({
   selector: 'app-selection',
   templateUrl: './selection.component.html',
   styleUrls: ['./selection.component.scss', '../base.component.scss']
 })
-export class SelectionComponent extends BaseComponent implements AfterContentInit {
+export class SelectionComponent extends BaseComponent {
   protected options: { id: string, string: string }[];
 
   constructor(
@@ -36,22 +36,12 @@ export class SelectionComponent extends BaseComponent implements AfterContentIni
     }
   }
 
-  ngAfterContentInit() {
-    this.automaticOptionShow();
-  }
-
-  automaticOptionShow() {
-    if (this.edit) {
-      this.presentActionSheet();
-    }
-  }
-
   localAssessAttr() {
     this.presentActionSheet();
     this.assessAttr();
   }
 
-  buttons(): IOptionsDialogButton[] {
+  buttons(): IOptionsBottomsheetButton[] {
     const buttons = this.options.map(o => {
       return {
         text: o.string,
@@ -74,10 +64,10 @@ export class SelectionComponent extends BaseComponent implements AfterContentIni
 
 
   async presentActionSheet() {
-    const data: IOptionsDialogData = {};
+    const data: IOptionsBottomsheetData = {};
     data.header = this.label;
     data.buttons = await this.buttons();
-    this.bottomSheet.open(OptionsDialogComponent, { data });
+    this.bottomSheet.open(OptionsBottomsheetComponent, { data });
   }
 
 

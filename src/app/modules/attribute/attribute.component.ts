@@ -1,6 +1,6 @@
 import {
-  Component, OnInit, ComponentFactoryResolver, ViewChild, ViewContainerRef, AfterContentInit, Input, Output, EventEmitter,
-  ComponentRef, ChangeDetectionStrategy, OnDestroy
+  Component, ComponentFactoryResolver, ViewChild, ViewContainerRef, AfterContentInit,
+  Input, Output, EventEmitter, ComponentRef, ChangeDetectionStrategy, OnDestroy
 } from '@angular/core';
 import { BaseComponent } from './base/base.component';
 import { SelectionComponent } from './base/selection/selection.component';
@@ -9,10 +9,6 @@ import { MultipleSelectionComponent } from './base/multiple-selection/multiple-s
 import { SelectionImgComponent } from './base/selection-img/selection-img.component';
 import { NotesComponent } from './base/notes/notes.component';
 import { ImageCaptureComponent } from './base/image-capture/image-capture.component';
-import { BehaviorSubject } from 'rxjs';
-// import { NumericListComponent } from './base/numeric-list/numeric-list.component';
-// import { ImageCaptureComponent } from './base/image-capture/image-capture.component';
-// import { ObservationsComponent } from './observations/observations.component';
 
 export interface Attribute {
   id: string;
@@ -21,7 +17,6 @@ export interface Attribute {
   updateOptions: { push?: boolean, delete?: boolean, pop?: boolean, partial?: any };
   editValue: any;
 }
-
 export interface Config {
   id: string;
   string: string;
@@ -37,7 +32,7 @@ export interface Config {
   template: '<ng-template #entry></ng-template>',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AttributeComponent implements OnInit, AfterContentInit, OnDestroy {
+export class AttributeComponent implements AfterContentInit, OnDestroy {
   public entity: boolean;
   constructor(
     private _resolver: ComponentFactoryResolver
@@ -48,7 +43,8 @@ export class AttributeComponent implements OnInit, AfterContentInit, OnDestroy {
   @Input() attribute: Attribute;
   @Input() canEdit: boolean;
   @Input() editMode: boolean;
-  @Output() save = new EventEmitter<{ value: string, options: { delete: boolean, push: boolean, pop: boolean }, entity: boolean }>();
+  @Output() save = new EventEmitter<{ value: string, options?: { delete: boolean, push: boolean, pop: boolean }, entity?: boolean }>();
+  @Output() cancel = new EventEmitter();
   @ViewChild('entry', { read: ViewContainerRef }) entry: ViewContainerRef;
   private checkForHexRegExp = /^[0-9a-fA-F]{24}$/;
 
@@ -73,15 +69,8 @@ export class AttributeComponent implements OnInit, AfterContentInit, OnDestroy {
     { id: '57c84628ab66902c2208a855', name: 'brix_degree', component: NumericListComponent }
   ];
 
-  ngOnInit() {
-  }
-  ngOnDestroy() {
-    if (this.component) { this.component.destroy(); }
-  }
-
-  ngAfterContentInit() {
-    this.setComponentFactoryById(this.attribute.id);
-  }
+  ngOnDestroy() { if (this.component) { this.component.destroy(); } }
+  ngAfterContentInit() { this.setComponentFactoryById(this.attribute.id); }
 
   private setComponentFactoryById(id: string) {
     if (!id || !this.checkForHexRegExp.test(id)) {
@@ -89,61 +78,24 @@ export class AttributeComponent implements OnInit, AfterContentInit, OnDestroy {
     }
     const component = this.getAttr(this.attributesComponentList, id, 'component');
     if (!component) {
-      // throw new Error('El id ' + id + ' no tiene componente');
+      console.log('El id ' + id + ' no tiene componente');
       return;
     }
+
     this.entity = this.getAttr(this.attributesComponentList, id, 'entity');
     this.component = this.entry.createComponent(this._resolver.resolveComponentFactory(component));
 
     // setup component
     this.component.instance.config = this.attribute.config;
-    this.component.instance.attribute$ = new BehaviorSubject(this.attribute);
     this.component.instance.isEntity = this.entity;
     this.component.instance.attribute = this.attribute;
-    this.component.instance.attrValue = this.attribute.value;
     this.component.instance.attrValue$.next(this.attribute.value);
     this.component.instance.attrOldValue = this.attribute.value;
     this.component.instance.setTemplate(this.editMode);
     this.component.instance.canEdit = this.canEdit;
-    this.component.instance.save = async ($event) => {
-      console.log('OnSave', $event);
-
-      // console.log('On Save', {
-      //   $event,
-      //   attrOldValue: this.component.instance.attrOldValue,
-      //   valueEmitted: { value: this.component.instance.attrValue, options: $event.options, entity: this.entity }
-      // });
-      // // this.component.instance.attrOldValue = this.component.instance.attrValue;
-      // this.save.emit({ value: this.component.instance.attrValue, options: $event.options, entity: this.entity });
-      return true;
-    };
-    this.component.instance.cancel = () => {
-      console.log('Canceled');
-    };
+    this.component.instance.save = ($event) => this.save.emit({ id: this.attribute.id, ...$event });
+    this.component.instance.cancel = () => this.save.emit();
   }
-
-  // public async saveAndGoBack() {
-  //   this.goBack.emit();
-  //   console.log('saveAndGoBack');
-  //   // const attrActive = this.attrQ.getActive();
-  //   // await this.attrS.updateActiveAttr(attrActive.editValue, attrActive.updateOptions, this.entity);
-  //   // this.component.instance.updateNewValue(attrActive.editValue, attrActive.updateOptions);
-  // }
-
-  // public async deleteAndGoBack() {
-  //   this.goBack.emit();
-  //   console.log('deleteAndGoBack');
-  //   // const attrActive = this.attrQ.getActive();
-  //   // await this.attrS.updateActiveAttr(attrActive.value, { delete: true }, this.entity);
-  //   // this.component.instance.updateNewValue(undefined, { delete: true });
-  // }
-
-  // public async saveFromComponent($event) {
-  //   console.log('$event save', $event);
-  //   console.log('saveFromComponent');
-  //   // await this.attrS.updateActiveAttr($event.value, $event.options, this.entity);
-  //   // this.component.instance.updateNewValue($event.value, $event.options);
-  // }
 
   private getAttr(attrs: any[], id: string, dd: string) {
     // const attr = attrs.find(x => x.id);

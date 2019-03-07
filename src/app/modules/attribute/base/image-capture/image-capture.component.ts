@@ -45,15 +45,15 @@ export class ImageCaptureComponent extends BaseComponent {
     this.imgPicker.take();
   }
   protected _setupOnInit() {
-    this.listViewValue = this.attribute$.pipe(map(attr => {
-      if (!Array.isArray(attr.value)) { return []; }
-      return attr.value.map(img => {
-        return {
-          url: this.bucketUrl + img,
-          thumbnail: this.bucketUrlThumb + img.substr(0, img.lastIndexOf('.')) + '.jpg'
-        };
-      });
-    }));
+    // this.listViewValue = this.attribute$.pipe(map(attr => {
+    //   if (!Array.isArray(attr.value)) { return []; }
+    //   return attr.value.map(img => {
+    //     return {
+    //       url: this.bucketUrl + img,
+    //       thumbnail: this.bucketUrlThumb + img.substr(0, img.lastIndexOf('.')) + '.jpg'
+    //     };
+    //   });
+    // }));
 
     // this.listViewLabel = this.attrValue.pipe(map(x => {
     //   if (!Array.isArray(x)) { return []; }
@@ -69,13 +69,13 @@ export class ImageCaptureComponent extends BaseComponent {
 
     // this.setInitialEditValue();
 
-    this.numOfPics = this.attribute$
-      .pipe(map(x => x.config))
-      .pipe(map(config => {
-        return this.getAttr(config, 'numOfPics', 'number') ? this.getAttr(config, 'numOfPics', 'number') : 1;
-      }));
+    // this.numOfPics = this.attribute$
+    //   .pipe(map(x => x.config))
+    //   .pipe(map(config => {
+    //     return this.getAttr(config, 'numOfPics', 'number') ? this.getAttr(config, 'numOfPics', 'number') : 1;
+    //   }));
 
-    this.currentNumOfPics = this.listViewValue.pipe(map(x => x.length));
+    // this.currentNumOfPics = this.listViewValue.pipe(map(x => x.length));
     // this.local$.next(this.initPicArray());
 
     // this.listViewValue.subscribe(x => console.log('listViewValue', x));
@@ -139,17 +139,16 @@ export class ImageCaptureComponent extends BaseComponent {
 
   async updateStatus(index, status) {
 
-    const edit = await this.editViewValue.pipe(take(1)).toPromise();
-    if (!edit) { return; }
-    const list = [...edit];
+    // const edit = await this.editViewValue.pipe(take(1)).toPromise();
+    // if (!edit) { return; }
+    // const list = [...edit];
 
-    const result = {
-      ...list[index],
-      status
-    };
-    list[index] = result;
+    // const result = {
+    //   ...list[index],
+    //   status
+    // };
+    // list[index] = result;
 
-    this.update({ editValue: list });
 
   }
 
@@ -217,13 +216,13 @@ export class ImageCaptureComponent extends BaseComponent {
   }
 
   async delete(index) {
-    this.loading$.next(true);
-    const current = await this.attribute$.pipe(map(x => x.value)).pipe(take(1)).toPromise();
-    console.log('Delete', current[index]);
-    await this.save({ value: [current[index]], options: { pop: true } });
-    setTimeout(() => {
-      this.loading$.next(false);
-    }, 4000);
+    // this.loading$.next(true);
+    // const current = await this.attribute$.pipe(map(x => x.value)).pipe(take(1)).toPromise();
+    // console.log('Delete', current[index]);
+    // await this.save({ value: [current[index]], options: { pop: true } });
+    // setTimeout(() => {
+    //   this.loading$.next(false);
+    // }, 4000);
   }
 
   async presentActionSheet(url, i) {
@@ -288,27 +287,27 @@ export class ImageCaptureComponent extends BaseComponent {
   }
 
   async upload(index) {
-    const current = await this.editViewValue.pipe(take(1)).toPromise();
-    const file = this.fileHolder[index];
+    // const current = await this.editViewValue.pipe(take(1)).toPromise();
+    // const file = this.fileHolder[index];
 
-    if (
-      Array.isArray(current) &&
-      current[index] &&
-      current[index].status === 'upload' &&
-      file &&
-      file.resized
-    ) {
-      await this.updateStatus(index, 'uploading');
-      const response = await <Promise<{ ETAG: string, url: string, key: string }>>this.selected(file);
-      console.log('response', response);
-      this.save({ value: [response.key], options: { push: true } });
-      // setTimeout(() => {
-      //   this.updateLocal(response.key, index, 'exist');
-      // }, 2000);
+    // if (
+    //   Array.isArray(current) &&
+    //   current[index] &&
+    //   current[index].status === 'upload' &&
+    //   file &&
+    //   file.resized
+    // ) {
+    //   await this.updateStatus(index, 'uploading');
+    //   const response = await <Promise<{ ETAG: string, url: string, key: string }>>this.selected(file);
+    //   console.log('response', response);
+    //   this.save({ value: [response.key], options: { push: true } });
+    //   // setTimeout(() => {
+    //   //   this.updateLocal(response.key, index, 'exist');
+    //   // }, 2000);
 
-    } else {
-      console.log('no se puede guardar la imagen');
-    }
+    // } else {
+    //   console.log('no se puede guardar la imagen');
+    // }
   }
 
   async uploadAndSave() {
@@ -335,30 +334,28 @@ export class ImageCaptureComponent extends BaseComponent {
     return { ETAG: 'string', url: 'string', key: 'string' };
   }
 
-  async updateNewValue(newValue, options) {
-    const oldValue = await this.attribute$.pipe(map(x => x.value)).pipe(take(1)).toPromise();
+  // async updateNewValue(newValue, options) {
+  //   const oldValue = await this.attribute$.pipe(map(x => x.value)).pipe(take(1)).toPromise();
 
-    if (options && Array.isArray(newValue)) {
-      if (options.push) {
-        if (oldValue) {
-          newValue = [...oldValue, ...newValue];
-        }
-      }
-      if (options.pop) {
-        newValue = oldValue.filter(function (e) { return this.indexOf(e) === -1; }, newValue);
-      }
+  //   if (options && Array.isArray(newValue)) {
+  //     if (options.push) {
+  //       if (oldValue) {
+  //         newValue = [...oldValue, ...newValue];
+  //       }
+  //     }
+  //     if (options.pop) {
+  //       newValue = oldValue.filter(function (e) { return this.indexOf(e) === -1; }, newValue);
+  //     }
 
-    }
-    console.log('newVale', newValue);
-    if (options.delete) {
-      this.update({ value: [] });
-      return;
-    }
-    setTimeout(async () => {
-      this.update({ value: newValue });
-      this.uploading = false;
-      this.cdr.detectChanges();
-    }, 3000);
-  }
+  //   }
+  //   console.log('newVale', newValue);
+  //   if (options.delete) {
+  //     return;
+  //   }
+  //   setTimeout(async () => {
+  //     this.uploading = false;
+  //     this.cdr.detectChanges();
+  //   }, 3000);
+  // }
 
 }

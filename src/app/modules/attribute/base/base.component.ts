@@ -9,54 +9,25 @@ import { Attribute, Config } from '../attribute.component';
   styleUrls: ['./base.component.scss']
 })
 export class BaseComponent implements OnInit {
-  public attribute$: Observable<Attribute>;
   public attribute: Attribute;
   public config: Config[];
-  public edit: boolean;
   public canEdit: boolean;
   public editMode: boolean;
-  // public subject: BehaviorSubject<any>;
-  // public value: Observable<any>;
   public label: string;
-  public attrValue: any;
   public attrOldValue: any;
-  public attrValue$: BehaviorSubject<any>;
-  public description: Observable<string>;
-  // public listViewLabel: Observable<any>;
-  public listViewValue: Observable<any>;
-  public editViewValue: Observable<any>;
-  // public updateOptios: BehaviorSubject<{ push?: boolean, delete?: boolean, pop?: boolean, partial?: any }>;
-  public valueIsSet$: Observable<boolean>;
+  public attrValue$ = new BehaviorSubject(undefined);
   public isEntity: boolean;
 
   public currentEmbeddedViewRef: EmbeddedViewRef<any>;
 
-  constructor() {
-    // this.subject = new BehaviorSubject(undefined);
-    // this.updateOptios = new BehaviorSubject({});
-    // this.value = this.subject.asObservable();
-    this.attrValue$ = new BehaviorSubject(undefined);
-  }
-
+  constructor() { }
 
   @ViewChild('entry', { read: ViewContainerRef }) entry: ViewContainerRef;
   @ViewChild('listViewTmpl') listViewTmpl: TemplateRef<any>;
   @ViewChild('editViewTmpl') editViewTmpl: TemplateRef<any>;
 
   ngOnInit() {
-    // this.description = this.attribute$.pipe(map(x => x.config)).pipe(map(config => {
-    //   return this.getAttr(config, 'label', 'string');
-    // }));
-
     this.label = this.getAttr(this.config, 'label', 'string');
-
-    this.valueIsSet$ = this.attrValue$.pipe(map(value => {
-      if (value === undefined || value === null) {
-        return false;
-      } else {
-        return true;
-      }
-    }));
 
     this._setupOnInit();
     this.setupOnInit();
@@ -67,7 +38,6 @@ export class BaseComponent implements OnInit {
 
 
   public setTemplate(edit) {
-    this.edit = edit;
     if (this.currentEmbeddedViewRef) { this.currentEmbeddedViewRef.destroy(); }
     if (edit === true) {
       try {
@@ -80,16 +50,6 @@ export class BaseComponent implements OnInit {
         this.editMode = false;
       } catch (e) { console.log('Error: No existe el template listView'); }
     }
-  }
-
-  // updateNewValue(newValue, options) {
-  //   if (!this.update) { console.log('update variable is no set'); return; }
-  //   this.update({ value: newValue, editValue: undefined });
-  //   this.attrValue = newValue;
-  // }
-
-  update(newValue) {
-    // this.attrValue = newValue;
   }
 
   async localSave() {
@@ -105,11 +65,8 @@ export class BaseComponent implements OnInit {
     this.cancel();
   }
 
-  assessAttr() {
-    this.setTemplate(true);
-  }
-  async save($event): Promise<boolean> { return; }
-
+  assessAttr() { this.setTemplate(true); }
+  save(value: any) { }
   cancel() { }
 
   protected getAttr(attrs: any[], id: string, dd: string) {

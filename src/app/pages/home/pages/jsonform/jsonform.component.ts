@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./jsonform.component.scss']
 })
 export class JsonformComponent implements OnInit {
-
+  data;
   constructor() { }
 
   exampleJsonObject = {
@@ -113,22 +113,229 @@ export class JsonformComponent implements OnInit {
         'items': [{ 'key': 'notes', 'type': 'textarea', 'notitle': true }]
       }
     ],
-    'data': {
-      'first_name': 'Jane',
-      'last_name': 'Doe',
-      'address': {
-        'street_1': '123 Main St.',
-        'city': 'Las Vegas',
-        'state': 'NV',
-        'zip_code': '89123'
+    // 'data': {
+    //   'first_name': 'Jane',
+    //   'last_name': 'Doe',
+    //   'address': {
+    //     'street_1': '123 Main St.',
+    //     'city': 'Las Vegas',
+    //     'state': 'NV',
+    //     'zip_code': '89123'
+    //   },
+    //   'birthday': '1999-09-09',
+    //   'phone_numbers': [
+    //     { 'type': 'cell', 'number': '702-123-4567' },
+    //     { 'type': 'work', 'number': '702-987-6543' }
+    //   ],
+    //   'notes': '(This is an example of an uninteresting note.)'
+    // }
+  };
+  form_ = {
+    'schema': {
+      'title': 'Who\'s your favorite captain?',
+      'description': 'Demonstrates different ways to create select controls from a list of values.',
+      'type': 'object',
+      'properties': {
+        'captain1': {
+          'title': 'Favorite captain 1',
+          'description': 'enum array in schema (JSON Schema v1+)',
+          'type': 'string',
+          'enum': ['William Shatner',
+            'Patrick Stewart',
+            'John Barrowman',
+            'Nathan Fillion']
+        },
+        'captain2': {
+          'title': 'Favorite captain 2',
+          'description': 'oneOf array with enum items in schema (JSON Schema v4+)',
+          'type': 'string',
+          'oneOf': [
+            { 'title': 'James T. Kirk', 'enum': ['William Shatner'] },
+            { 'title': 'Jean-Luc Picard', 'enum': ['Patrick Stewart'] },
+            { 'title': 'Jack Harkness', 'enum': ['John Barrowman'] },
+            { 'title': 'Malcolm Reynolds', 'enum': ['Nathan Fillion'] }
+          ]
+        },
+        'captain3': {
+          'title': 'Favorite captain 3',
+          'description': 'oneOf array with const items in schema (JSON Schema v6+)',
+          'type': 'string',
+          'oneOf': [
+            { 'title': 'James T. Kirk', 'const': 'William Shatner' },
+            { 'title': 'Jean-Luc Picard', 'const': 'Patrick Stewart' },
+            { 'title': 'Jack Harkness', 'const': 'John Barrowman' },
+            { 'title': 'Malcolm Reynolds', 'const': 'Nathan Fillion' }
+          ]
+        },
+        'captain4': {
+          'title': 'Favorite captain 4',
+          // tslint:disable-next-line:max-line-length
+          'description': 'titleMap array in layout (<a href="http://schemaform.io/examples/bootstrap-example.html#/65b7b86938bddeb30b149d47bd595f56">Angular Schema Form</a>)',
+          'type': 'string'
+        },
+        'captain5': {
+          'title': 'Favorite captain 5',
+          // tslint:disable-next-line:max-line-length
+          'description': 'enum + enumNames in schema (<a href="https://mozilla-services.github.io/react-jsonschema-form/">React jsonschema form</a>)',
+          'type': 'string',
+          'enum': ['William Shatner',
+            'Patrick Stewart',
+            'John Barrowman',
+            'Nathan Fillion'],
+          'enumNames': ['James T. Kirk',
+            'Jean-Luc Picard',
+            'Jack Harkness',
+            'Malcolm Reynolds']
+        },
+        'captain6': {
+          'title': 'Favorite captain 6',
+          // tslint:disable-next-line:max-line-length
+          'description': 'titleMap object in layout (<a href="http://ulion.github.io/jsonform/playground/?example=fields-select">JSON Form</a>)',
+          'type': 'string'
+        },
+        'captain7': {
+          'title': 'Favorite captain 7',
+          'description': 'flat titleMap array with groups in layout',
+          'type': 'string'
+        },
+        'captain8': {
+          'title': 'Favorite captain 8',
+          'description': 'hierarchical titleMap array in layout',
+          'type': 'string'
+        },
+        'captain9': {
+          'title': 'Favorite captain 9',
+          'description': 'oneOf array with <strong>title: "group: name"</strong> in schema',
+          'type': 'string',
+          'oneOf': [
+            { 'title': 'Star Trek: James T. Kirk', 'const': 'William Shatner' },
+            { 'title': 'Star Trek: Jean-Luc Picard', 'const': 'Patrick Stewart' },
+            { 'title': 'Torchwood: Jack Harkness', 'const': 'John Barrowman' },
+            { 'title': 'Firefly: Malcolm Reynolds', 'const': 'Nathan Fillion' }
+          ]
+        }
+      }
+    },
+    'layout': [
+      { 'widget': 'message', 'message': '<h3>Values only</h3>' },
+      'captain1',
+      { 'widget': 'message', 'message': '<h3>Names &amp; Values</h3>' },
+      'captain2',
+      'captain3',
+      {
+        'key': 'captain4',
+        'titleMap': [
+          { 'name': 'James T. Kirk', 'value': 'William Shatner' },
+          { 'name': 'Jean-Luc Picard', 'value': 'Patrick Stewart' },
+          { 'name': 'Jack Harkness', 'value': 'John Barrowman' },
+          { 'name': 'Malcolm Reynolds', 'value': 'Nathan Fillion' }
+        ]
       },
-      'birthday': '1999-09-09',
-      'phone_numbers': [
-        { 'type': 'cell', 'number': '702-123-4567' },
-        { 'type': 'work', 'number': '702-987-6543' }
-      ],
-      'notes': '(This is an example of an uninteresting note.)'
-    }
+      'captain5',
+      {
+        'key': 'captain6',
+        'titleMap': {
+          'William Shatner': 'James T. Kirk',
+          'Patrick Stewart': 'Jean-Luc Picard',
+          'John Barrowman': 'Jack Harkness',
+          'Nathan Fillion': 'Malcolm Reynolds'
+        }
+      },
+      { 'widget': 'message', 'message': '<h3>Groups, Names, &amp; Values</h3>' },
+      {
+        'key': 'captain7',
+        'titleMap': [
+          { 'group': 'Star Trek', 'name': 'James T. Kirk', 'value': 'William Shatner' },
+          { 'group': 'Star Trek', 'name': 'Jean-Luc Picard', 'value': 'Patrick Stewart' },
+          { 'group': 'Torchwood', 'name': 'Jack Harkness', 'value': 'John Barrowman' },
+          { 'group': 'Firefly', 'name': 'Malcolm Reynolds', 'value': 'Nathan Fillion' }
+        ]
+      },
+      {
+        'key': 'captain8',
+        'titleMap': [
+          {
+            'group': 'Star Trek',
+            'items': [{ 'name': 'James T. Kirk', 'value': 'William Shatner' },
+            { 'name': 'Jean-Luc Picard', 'value': 'Patrick Stewart' }]
+          },
+          {
+            'group': 'Torchwood',
+            'items': [{ 'name': 'Jack Harkness', 'value': 'John Barrowman' }]
+          },
+          {
+            'group': 'Firefly',
+            'items': [{ 'name': 'Malcolm Reynolds', 'value': 'Nathan Fillion' }]
+          }
+        ]
+      },
+      'captain9'
+    ]
+  };
+  form__ = {
+    'schema': {
+      'type': 'object',
+      'title': 'Comment',
+      'properties': {
+        'name': {
+          'title': 'Name',
+          'type': 'string'
+        },
+        'email': {
+          'title': 'Email',
+          'type': 'string',
+          'pattern': '^\\S+@\\S+$',
+          'description': 'Email will be used for evil.'
+        },
+        'comment': {
+          'title': 'Comment',
+          'type': 'string',
+          'maxLength': 20,
+          'validationMessage': 'Don\'t be greedy!'
+        }
+      },
+      'required': [
+        'name',
+        'email',
+        'comment'
+      ]
+    },
+    'form': [
+      {
+        'type': 'help',
+        'helpvalue': '<div class="alert alert-info">Grid it up with bootstrap</div>'
+      },
+      {
+        'type': 'section',
+        'htmlClass': 'row',
+        'items': [
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-6',
+            'items': [
+              'name'
+            ]
+          },
+          {
+            'type': 'section',
+            'htmlClass': 'col-xs-6',
+            'items': [
+              'email'
+            ]
+          }
+        ]
+      },
+      {
+        'key': 'comment',
+        'type': 'textarea',
+        'placeholder': 'Make a comment'
+      },
+      {
+        'type': 'submit',
+        'style': 'btn-info',
+        'title': 'OK'
+      }
+    ]
   };
 
   ngOnInit() {
@@ -136,6 +343,19 @@ export class JsonformComponent implements OnInit {
 
   yourOnSubmitFn($event) {
     console.log($event);
+    this.data = $event;
+  }
+
+  get code() {
+    return JSON.stringify(this.data, null, 2);
+  }
+
+  set code(v) {
+    try {
+      this.data = JSON.parse(v);
+    } catch (e) {
+      console.log('error occored while you were typing the JSON');
+    }
   }
 
 }

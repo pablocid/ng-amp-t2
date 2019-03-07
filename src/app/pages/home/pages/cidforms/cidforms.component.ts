@@ -44,6 +44,7 @@ export class CidformsComponent implements OnInit {
     value: 'observation'
   };
 
+  // id, schm, attrId, value, options
   constructor() { }
 
   ngOnInit() {
