@@ -23,6 +23,8 @@
     "@angular/platform-browser-dynamic": "~7.2.0",
     "@angular/router": "~7.2.0",
     "angular6-json-schema-form": "^7.1.0",
+    "aws-amplify": "^1.1.22",
+    "aws-amplify-angular": "^2.1.9",
     "core-js": "^2.5.4",
     "d3": "^5.9.1",
     "exif-js": "^2.3.0",

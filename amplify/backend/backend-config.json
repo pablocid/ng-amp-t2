@@ -1,0 +1,32 @@
+{
+	"auth": {
+		"cognito2695f726": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation"
+		}
+	},
+	"function": {
+		"ngt2fn": {
+			"service": "Lambda",
+			"providerPlugin": "awscloudformation",
+			"build": true,
+			"dependsOn": []
+		}
+	},
+	"api": {
+		"ngt2api": {
+			"service": "API Gateway",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": [
+				{
+					"category": "function",
+					"resourceName": "ngt2fn",
+					"attributes": [
+						"Name",
+						"Arn"
+					]
+				}
+			]
+		}
+	}
+}

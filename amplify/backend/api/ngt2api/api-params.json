@@ -1,0 +1,35 @@
+{
+    "paths": [
+        {
+            "name": "/ngt2",
+            "lambdaFunction": "ngt2fn",
+            "privacy": {
+                "private": true,
+                "auth": "rw"
+            }
+        }
+    ],
+    "resourceName": "ngt2api",
+    "apiName": "ngt2api",
+    "functionArns": [
+        {
+            "lambdaFunction": "ngt2fn"
+        }
+    ],
+    "privacy": {
+        "auth": 1,
+        "unauth": 0,
+        "authRoleName": "ngt2-20190310171601-authRole",
+        "unAuthRoleName": "ngt2-20190310171601-unauthRole"
+    },
+    "dependsOn": [
+        {
+            "category": "function",
+            "resourceName": "ngt2fn",
+            "attributes": [
+                "Name",
+                "Arn"
+            ]
+        }
+    ]
+}
