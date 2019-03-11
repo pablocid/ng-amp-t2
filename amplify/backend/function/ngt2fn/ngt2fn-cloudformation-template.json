@@ -59,8 +59,8 @@
 				"Runtime": "nodejs8.10",
 				"Timeout": "25",
 				"Code": {
-					"S3Bucket": "ngt2-20190310171601-deployment",
-					"S3Key": "amplify-builds/ngt2fn-1552251768-latest-build.zip"
+					"S3Bucket": "ngt2-20190310201712-deployment",
+					"S3Key": "amplify-builds/ngt2fn-1552259922-latest-build.zip"
 				}
 			}
 		},
